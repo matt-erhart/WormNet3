@@ -7,7 +7,8 @@ const {
   QuantumPlugin,
   WebIndexPlugin,
   Sparky,
-  JSONPlugin
+  JSONPlugin, 
+  RawPlugin
 } = require("fuse-box");
 const rimraf = require('rimraf'); //fuse-box can 'clean' but this works better for me
 
@@ -26,6 +27,7 @@ Sparky.task("config", () => {
       SVGPlugin(), // for importing
       CSSPlugin(), // for importing
       JSONPlugin(), // for importing
+      RawPlugin([".frag", ".vert"]),
       WebIndexPlugin({ // to create an index.html file in dist
         template: "src/react/index.html"
       }),
@@ -36,8 +38,8 @@ Sparky.task("config", () => {
         })
     ]
   });
-  vendor = fuse.bundle("vendor").instructions("~ react/index.jsx"); // what's ~ mean?
-  app = fuse.bundle("app").instructions("> [react/index.jsx]"); // what's > [] mean?
+  vendor = fuse.bundle("vendor").instructions("~ regl/index.js"); // what's ~ mean?
+  app = fuse.bundle("app").instructions("> [regl/index.js]"); // what's > [] mean?
 });
 
 Sparky.task("rmDist", () => {

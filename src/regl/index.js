@@ -15,7 +15,7 @@ if (hasCanvas) hasCanvas.remove();
 let canvas = document.createElement("canvas");
 import {colors} from './constants';
 import {rgb01} from './scaleNeuronPositions';
-import * as data from "./assets/data/full.json"
+import * as data from "../assets/data/full.json"
 const padCanvas = 20;
 if (window.innerHeight > window.innerWidth) {
   canvas.height = window.innerWidth - padCanvas;
