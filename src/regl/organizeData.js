@@ -50,7 +50,7 @@ export const propagationsAsArrays = (propagations, neurons) => {
       propagation.target.activationTime
     ];
   });
-  console.log(propagationTypeColors[0])
+
   return {
     propagationSources,
     propagationTargets,

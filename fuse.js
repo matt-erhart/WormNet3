@@ -45,6 +45,7 @@ Sparky.task("config", () => {
 Sparky.task("rmDist", () => {
     //clean wasn't removing the maps
     rimraf.sync('./dist')
+    rimraf.sync('./.fusebox')
 });
 
 Sparky.task("setProdTrue", () => {

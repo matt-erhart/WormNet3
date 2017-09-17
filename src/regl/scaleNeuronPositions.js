@@ -74,7 +74,6 @@ export const scaleNeuronPositions = (
         ? rgb01(colors.excitesInActive)
         : rgb01(colors.inhibitsInActive);
   });
-  console.log(neurons[0]);
 
   return neurons;
 };

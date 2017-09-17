@@ -1,7 +1,6 @@
 precision mediump float;
 attribute vec3 propagationSources, propagationTargets, propagationColors;
 attribute vec2 startEndTimes; //points to interpolate between
-attribute float color01; //color map value between 0 and 1
 varying vec4 color01_v2f; // vertex 2 frag
 uniform float aspect, elapsedTime, radius; //interp 0-1
 varying float progress01;
