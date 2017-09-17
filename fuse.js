@@ -1,9 +1,9 @@
+//@ts-check
 const {
   FuseBox,
   SVGPlugin,
   CSSPlugin,
   CSSResourcePlugin,
-  BabelPlugin,
   QuantumPlugin,
   WebIndexPlugin,
   Sparky,
@@ -38,8 +38,8 @@ Sparky.task("config", () => {
         })
     ]
   });
-  vendor = fuse.bundle("vendor").instructions("~ regl/index.js"); // what's ~ mean?
-  app = fuse.bundle("app").instructions("> [regl/index.js]"); // what's > [] mean?
+  vendor = fuse.bundle("vendor").instructions("~ react/index.jsx"); // what's ~ mean?
+  app = fuse.bundle("app").instructions("> [react/index.jsx]"); // what's > [] mean?
 });
 
 Sparky.task("rmDist", () => {

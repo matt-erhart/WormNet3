@@ -2,9 +2,9 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import getMuiTheme from "material-ui/styles/getMuiTheme";
-import "./style.css"
 var injectTapEventPlugin = require("react-tap-event-plugin");
-injectTapEventPlugin();
+try { injectTapEventPlugin(); } catch (e) {  }
+
 var firebase = require("firebase");
 var config = {
   apiKey: "AIzaSyDseby1y2tlJxhIc96j_a96W8k_nt4bVHM",
@@ -31,6 +31,5 @@ const Root = () => {
   );
 };
 
-// render react DOM
 document.body.style.backgroundColor = "black";
 ReactDOM.render(<Root />, document.getElementById('root'));

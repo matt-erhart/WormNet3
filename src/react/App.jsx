@@ -8,6 +8,7 @@ import {
 import { Controls } from "./Controls";
 import { Upload } from "./Upload";
 import { Files } from "./Files";
+import {Canvas} from "./Canvas"
 
 import Drawer from "material-ui/Drawer";
 import IconButton from "material-ui/IconButton";
@@ -98,6 +99,7 @@ export class App extends React.Component{
           <Files prepareData={this.prepareData} />
         </Drawer>
         <div>
+          <Canvas />
           <Controls
             time={this.state.time}
             togglePlay={this.toggleTimer}
