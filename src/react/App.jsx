@@ -21,7 +21,7 @@ export class App extends React.Component{
     super();
     this.state = {
       time: 0,
-      isPlaying: true,
+      isPlaying: false,
       fileName: "",
       nLoaded: 0,
       open: false,
@@ -50,11 +50,15 @@ export class App extends React.Component{
 
   handleToggle = () => this.setState({ open: !this.state.open });
 
+  prepareData = (json) => {
+    console.log('prepare', json)
+
+  }
+
   render() {
     const {
       time
     } = this.state;
-    if (time < 100) console.log(time, 'react')
     return (
       <div>
         <IconButton

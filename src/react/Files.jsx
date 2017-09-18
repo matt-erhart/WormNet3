@@ -22,16 +22,22 @@ export class Files extends React.Component {
     this.fbListener = ref.on("value", snap => {
       this.setState({ fileNames: _.map(snap.val(), x => x.fileName) });
     });
-    console.log('hey')
-
   }
 
   handleDownload(e, fileName) {
-    storage.ref("data/" + fileName).getDownloadURL().then(url => {
-      fetch(url).then(res => res.json()).then(json => {
-        this.props.prepareData(json);
+    storage
+      .ref("data/" + fileName)
+      .getDownloadURL()
+      .then(url => {
+        fetch(url, { mode: "cors" })
+          .then(res => {
+            return res.json();
+          })
+          .then(data => this.props.prepareData(data))
+          .catch(function(error) {
+            console.log(error);
+          });
       });
-    });
   }
   componentWillUnmount() {
     if (typeof this.fbListener.off === "function") this.fbListener.off();
@@ -46,11 +52,10 @@ export class Files extends React.Component {
           .orderByChild("fileName")
           .equalTo(fileName)
           .once("child_added", snap => {
-            database.ref("json_files" + '/' + snap.key).remove()
+            database.ref("json_files" + "/" + snap.key).remove();
           });
       })
-      .catch(function(error) {
-      });
+      .catch(function(error) {});
   }
 
   render() {
@@ -68,7 +73,10 @@ export class Files extends React.Component {
                 <IconButton
                   style={{ position: "absolute", top: 10, right: 0 }}
                   iconStyle={{ position: "absolute", top: 0, right: 0 }}
-                  onClick={e => {this.removeData(e, fileName); e.stopPropagation()}}
+                  onClick={e => {
+                    this.removeData(e, fileName);
+                    e.stopPropagation();
+                  }}
                 >
                   <DeleteForever color="lightgrey" hoverColor="red" />
                 </IconButton>

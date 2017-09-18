@@ -22,7 +22,6 @@ if (!firebase.apps.length) {
 }
 export var storage = firebase.storage();
 export var database = firebase.database();
-
 import { App } from "./App";
 
 const Root = () => {

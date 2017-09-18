@@ -1,12 +1,13 @@
 {
-  "name": "regl-glslify-webpack-example",
+  "name": "wormnet",
   "version": "0.0.0",
-  "description": "A simple regl example using webpack and glslify",
+  "description": "Worm brain visualization",
   "main": "bundle.js",
   "scripts": {
     "start": "webpack-dev-server",
     "build": "webpack -p --progress --config=webpack.prod.js ",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "cors": "gsutil cors set cors.json gs://somebucket"
   },
   "author": "Giff Song <giff.song@gmail.com>",
   "license": "MIT",
@@ -27,6 +28,8 @@
     "material-ui": "^0.18.7",
     "mathjs": "^3.16.3",
     "mouse-change": "^1.3.0",
+    "mouse-position": "^1.0.0",
+    "mouse-pressed": "0.0.1",
     "mouse-wheel": "^1.2.0",
     "ndarray": "^1.0.18",
     "ndarray-linspace": "^2.0.3",
@@ -34,6 +37,7 @@
     "ndarray-pack": "^1.2.1",
     "ndarray-show": "^2.0.0",
     "ndarray-vector-fill": "^1.0.0",
+    "orbit-camera": "0.0.3",
     "prop-types": "^15.5.10",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
@@ -41,16 +45,14 @@
     "react-router-dom": "^4.1.2",
     "react-tap-event-plugin": "^2.0.1",
     "regl": "^1.3.0",
+    "scroll-speed": "^1.0.0",
     "storage": "^0.2.0",
     "store": "^2.0.12",
     "ts-lib": "^0.0.5",
-    "uid-safe": "^2.1.5",
-    "mouse-position": "^1.0.0",
-    "mouse-pressed": "0.0.1",
-    "orbit-camera": "0.0.3",
-    "scroll-speed": "^1.0.0"
+    "uid-safe": "^2.1.5"
   },
   "devDependencies": {
+    "browser-sync": "^2.18.13",
     "fuse-box": "^2.2.31",
     "rimraf": "^2.6.2",
     "ts-node": "^3.3.0",

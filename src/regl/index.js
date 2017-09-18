@@ -163,7 +163,8 @@ export const drawLines = (regl, camera) => {
     },
 
     uniforms: {
-      color: [47 / 255, 47 / 255, 47 / 255, 1],
+      // color: [47 / 255, 47 / 255, 47 / 255, 1],
+      color: [80 / 255, 80 / 255, 80 / 255, 1],
       aspect: ctx => ctx.viewportWidth / ctx.viewportHeight,
       elapsedTime: regl.prop("elapsedTime"),
       projection: ({ viewportWidth, viewportHeight }) =>
