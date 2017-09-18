@@ -45,8 +45,7 @@ export class App extends React.Component{
   }
 
   setTime = value => {
-    this.setState({ scrubTime: value });    
-    this.setState({ time: value });
+      this.setState({ scrubTime: value, time: value });    
   };
 
   handleToggle = () => this.setState({ open: !this.state.open });
@@ -55,7 +54,7 @@ export class App extends React.Component{
     const {
       time
     } = this.state;
-
+    if (time < 100) console.log(time, 'react')
     return (
       <div>
         <IconButton

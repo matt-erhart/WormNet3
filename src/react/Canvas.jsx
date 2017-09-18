@@ -61,17 +61,14 @@ export class Canvas extends React.Component {
         elapsedTime =
         elapsedTime >= settings.duration ? elapsedTime : time - startTime;
       }
-
-      const t = Math.round(d.scales.elapsed.invert(elapsedTime));
-      this.props.setTime(t)
+      const t = Math.ceil(d.scales.elapsed.invert(elapsedTime));
+      if (tick%5 === 0) this.props.setTime(t)
       
       camera.tick();
       regl.clear({
         color: [0, 0, 0, 1]
       });
-
-      if (tick < 2000) {
-        
+       
         d.buffers.spikeTime({ data: d.dataFromAllTimes.spikes[t] });
         d.buffers.neuronsColorTime({
           data: d.dataFromAllTimes.colorByTime[t]
@@ -94,8 +91,6 @@ export class Canvas extends React.Component {
           { radius: 5, elapsedTime: elapsedTime - 0.01, ...propagationProps },
           { radius: 3, elapsedTime: elapsedTime - 0.02, ...propagationProps }
         ]);
-
-      }
     });
   }
 
