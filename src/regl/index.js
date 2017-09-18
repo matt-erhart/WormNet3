@@ -9,12 +9,12 @@ const scaleLinear = require("d3-scale").scaleLinear;
 const mat4 = require("gl-mat4");
 const range = require("d3-array").range;
 import * as _ from "lodash";
-import {colors} from './constants'
+import { colors } from "./constants";
 // var hasCanvas = document.querySelector("canvas");
 // if (hasCanvas) hasCanvas.remove();
 // let canvas = document.createElement("canvas");
-import {rgb01} from './scaleNeuronPositions';
-import * as data from "../assets/data/full.json"
+import { rgb01 } from "./scaleNeuronPositions";
+import * as data from "../assets/data/full.json";
 // const padCanvas = 20;
 // if (window.innerHeight > window.innerWidth) {
 //   canvas.height = window.innerWidth - padCanvas;
@@ -34,10 +34,14 @@ let duration = 60; //seconds
 const spikeRadius = 30;
 const radius = 10;
 
-export const jsonToBuffers = (data, canvas, regl) => { 
-  console.log(colors)
-  
-  const neurons = scaleNeuronPositions(data.neurons, canvas.width, canvas.height);
+export const jsonToBuffers = (data, canvas, regl) => {
+  console.log(colors);
+
+  const neurons = scaleNeuronPositions(
+    data.neurons,
+    canvas.width,
+    canvas.height
+  );
   const links = linkPositions(data.links, neurons);
   const propagations = propagationsAsArrays(data.propagations, neurons);
   const nTimePoints = _.max(
@@ -67,52 +71,53 @@ export const jsonToBuffers = (data, canvas, regl) => {
   );
   spikes = _.zip.apply(_, spikes); //transpose
 
-
   const type = neurons.map(n => n.type);
-  const active = {excites: colors.excitesActive, inhibits: colors.inhibitsActive }
-  const inactive = {excites: colors.excitesInActive, inhibits: colors.inhibitsInActive }
-  
-  let colorByTime = spikes.map((arr,i) => {
+  const active = {
+    excites: colors.excitesActive,
+    inhibits: colors.inhibitsActive
+  };
+  const inactive = {
+    excites: colors.excitesInActive,
+    inhibits: colors.inhibitsInActive
+  };
+
+  let colorByTime = spikes.map((arr, i) => {
     return arr.map((rad, i) => {
-      return rad === spikeRadius?
-      rgb01(active[type[i]]):
-      rgb01(inactive[type[i]])
-    })
-  })
-  
+      return rad === spikeRadius
+        ? rgb01(active[type[i]])
+        : rgb01(inactive[type[i]]);
+    });
+  });
+
   let spikeTime = regl.buffer(spikes[0]);
-  let neuronsPos = regl.buffer({data: neurons.map(n => n.pos3d), length: neurons.length});
+  let neuronsPos = regl.buffer({
+    data: neurons.map(n => n.pos3d),
+    length: neurons.length
+  });
   let neuronsColorTime = regl.buffer(colorByTime[0]);
   let sources = regl.buffer(propagations.propagationSources);
   let targets = regl.buffer(propagations.propagationTargets);
   let pcolors = regl.buffer(propagations.propagationTypeColors);
   let startEndTimes = regl.buffer(startEndTimesFromAnimationDuration);
+  let linksArr = regl.buffer(links.linksArray);
   // let color01 = regl.buffer(propagations.startEndTimes.map(n => 0.5));
-  console.log(neuronsPos)
-  const buffers = {spikeTime, neuronsPos, neuronsColorTime, startEndTimes, propagations: {sources, targets, colors: pcolors }};
-  const dataFromAllTimes = {spikes, colorByTime}; //set spikeTime and neuronsColor buffers with these
-  const meta = {numberOfNeurons: neurons.length, numberOfPropagations: propagations.propagationSources.length}
-  return {buffers, dataFromAllTimes, meta}
-}
-
-// return
-
-
-
-
-
-
-// const regl = require("regl")({
-//   extensions: ["EXT_disjoint_timer_query", "OES_standard_derivatives"],
-//   canvas: el,
-//   onDone: require("fail-nicely")
-// });
-
-// let camera = require("canvas-orbit-camera")(canvas,{eye:[0,0,3.4]});
-
-// /**
-//  * THE NEURONS
-//  */
+  console.log(neuronsPos);
+  const buffers = {
+    spikeTime,
+    neuronsPos,
+    links: linksArr,
+    neuronsColorTime,
+    startEndTimes,
+    propagations: { sources, targets, colors: pcolors }
+  };
+  const dataFromAllTimes = { spikes, colorByTime }; //set spikeTime and neuronsColor buffers with these
+  const meta = {
+    numberOfNeurons: neurons.length,
+    numberOfPropagations: propagations.propagationSources.length,
+    numberOfLinks: links.linksArray.length
+  };
+  return { buffers, dataFromAllTimes, meta };
+};
 
 const commonSettings = {
   blend: {
@@ -125,32 +130,7 @@ const commonSettings = {
     }
   },
   depth: { enable: false }
-}
-
-
-
-export const setupCamera = (regl, camera) => {
-  return regl({
-    context: {
-      uniforms: {
-        aspect: ctx => ctx.viewportWidth / ctx.viewportHeight,
-        projection: ({ viewportWidth, viewportHeight }) =>
-          mat4.perspective(
-            [],
-            Math.PI / 4.0,
-            viewportWidth / viewportHeight,
-            0.1,
-            1000
-          ),
-        model: mat4.identity([]),
-        view: () => camera.view()
-      }
-    }
-  })
-}
-
-
-
+};
 
 export const drawNeurons = (regl, camera) => {
   return regl({
@@ -183,10 +163,53 @@ export const drawNeurons = (regl, camera) => {
   });
 };
 
+export const drawLines = (regl, camera) => {
+  return regl({
+    depth: commonSettings.depth,
+    frag: `
+    precision mediump float;
+    uniform vec4 color;
+    void main() {
+      gl_FragColor = color;
+    }`,
+
+    vert: `
+    precision mediump float;
+    attribute vec3 linksPos;
+    uniform mat4 projection, view, model;
+    uniform float aspect;
+
+    void main() {
+      gl_Position = projection * view * model * vec4(linksPos.x, linksPos.y * aspect, linksPos.z, 1);
+    }`,
+
+    attributes: {
+      linksPos: regl.prop('linksPos')
+    },
+
+    uniforms: {
+      color: [47 / 255, 47 / 255, 47 / 255, 1],
+      aspect: ctx => ctx.viewportWidth / ctx.viewportHeight,
+      elapsedTime: regl.prop("elapsedTime"),
+      projection: ({ viewportWidth, viewportHeight }) =>
+        mat4.perspective(
+          [],
+          Math.PI / 4.0,
+          viewportWidth / viewportHeight,
+          0.1,
+          100
+        ),
+      model: mat4.identity([]),
+      view: () => camera.view()
+    },
+    count: regl.prop("count"),
+    lineWidth: 1,
+    primitive: "line"
+  });
+};
 // /**
 //  * PROPAGATION
 //  */
-
 
 // const interpPoints = regl({
 //   blend: {
@@ -234,49 +257,6 @@ export const drawNeurons = (regl, camera) => {
 // /**
 //  * LINE
 //  */
-// let line = regl({
-//   depth: { enable: false },
-//   frag: `
-//     precision mediump float;
-//     uniform vec4 color;
-//     void main() {
-//       gl_FragColor = color;
-//     }`,
-
-//   vert: `
-//     precision mediump float;
-//     attribute vec3 position;
-//     uniform mat4 projection, view, model;
-//     uniform float aspect;
-
-//     void main() {
-//       gl_Position = projection * view * model * vec4(position.x, position.y * aspect, position.z, 1);
-//     }`,
-
-//   attributes: {
-//     position: links.linksArray
-//   },
-
-//   uniforms: {
-//     color: [47/255, 47/255, 47/255, 1],
-//     aspect: ctx => ctx.viewportWidth / ctx.viewportHeight,
-//     elapsedTime: regl.prop("elapsedTime"),
-//     projection: ({ viewportWidth, viewportHeight }) =>
-//       mat4.perspective(
-//         [],
-//         Math.PI / 4.0,
-//         viewportWidth / viewportHeight,
-//         0.1,
-//         100
-//       ),
-//     model: mat4.identity([]),
-//     view: () => camera.view()
-//   },
-
-//   count: links.linksArray.length,
-//   lineWidth: 1,
-//   primitive: "line"
-// });
 
 // let f = regl.frame(({ tick, time }) => {
 //     regl.clear({
@@ -293,13 +273,13 @@ export const drawNeurons = (regl, camera) => {
 //     spikeBuffer({ data: spikes[t] });
 //     colorBuff({data: colorByTime[t]})
 //   }
-  
+
 //   drawPoints();
 //   elapsedTime = elapsedTime >= duration ? elapsedTime : time - startTime;
 //   interpPoints([
-//     { radius: 7, elapsedTime }, 
+//     { radius: 7, elapsedTime },
 //     { radius: 5, elapsedTime: elapsedTime - .01 },
 //     { radius: 3, elapsedTime: elapsedTime - .02 },
 //   ]);
-  
+
 // });

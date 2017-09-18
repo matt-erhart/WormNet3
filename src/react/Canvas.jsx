@@ -1,6 +1,6 @@
 import uid from "uid-safe";
 import * as React from "react";
-import { jsonToBuffers, drawNeurons, setupCamera } from "../regl/index.js";
+import { jsonToBuffers, drawNeurons, setupCamera, drawLines } from "../regl/index.js";
 import * as data from "../assets/data/feed_json.json";
 
 export class Canvas extends React.Component {
@@ -19,15 +19,16 @@ export class Canvas extends React.Component {
   componentDidMount() {
     const regl = require("regl")({
          canvas: this.refs.canvas ,
-         extensions: [ "OES_standard_derivatives"]
+         extensions: [ "OES_standard_derivatives"],
+         onDone: require("fail-nicely")
         });
     let d = jsonToBuffers(data, this.refs.canvas, regl);
     let camera = require("../regl/camera")(this.refs.canvas, {
       eye: [0, 0, 3.4]
     });
 
-    console.log(d);
-    const draw = drawNeurons(regl, camera);
+    const Neurons = drawNeurons(regl, camera);
+    const Links = drawLines(regl, camera);
     regl.frame(({ tick }) => {
       camera.tick();
       regl.clear({
@@ -40,12 +41,16 @@ export class Canvas extends React.Component {
           data: d.dataFromAllTimes.colorByTime[tick]
         });
 
-        draw({
+        Neurons({
           neuronsPos: d.buffers.neuronsPos,
           colors: d.buffers.neuronsColorTime,
           radius: d.buffers.spikeTime,
           count: d.meta.numberOfNeurons
         });
+        Links({
+            linksPos: d.buffers.links,
+            count: d.meta.numberOfLinks
+        })
       }
     });
   }
