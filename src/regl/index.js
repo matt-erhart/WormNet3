@@ -1,8 +1,3 @@
-// const glsl = require("glslify");
-// const linspace = require("ndarray-linspace");
-// const vectorFill = require("ndarray-vector-fill");
-// const ndarray = require("ndarray");
-// const ease = require("eases/cubic-in-out");
 import { scaleNeuronPositions } from "./scaleNeuronPositions";
 import { propagationsAsArrays, linkPositions } from "./organizeData";
 const scaleLinear = require("d3-scale").scaleLinear;
@@ -10,29 +5,9 @@ const mat4 = require("gl-mat4");
 const range = require("d3-array").range;
 import * as _ from "lodash";
 import { colors } from "./constants";
-// var hasCanvas = document.querySelector("canvas");
-// if (hasCanvas) hasCanvas.remove();
-// let canvas = document.createElement("canvas");
 import { rgb01 } from "./scaleNeuronPositions";
 import * as data from "../assets/data/full.json";
-// const padCanvas = 20;
-// if (window.innerHeight > window.innerWidth) {
-//   canvas.height = window.innerWidth - padCanvas;
-//   canvas.width = window.innerWidth - padCanvas;
-// } else {
-//   canvas.height = window.innerHeight - padCanvas;
-//   canvas.width = window.innerHeight - padCanvas;
-// }
 
-// Object.assign(document.body.style,{display: "flex", justifyContent: "center", background: "black"});
-// const el = document.body.appendChild(canvas);
-
-// let elapsedTime = 0;
-// let prog = 0;
-// let startTime = 0;
-// let duration = 60; //seconds
-// const spikeRadius = 30;
-// const radius = 10;
 
 export const jsonToBuffers = (data, canvas, regl, settings) => {
   const {duration, spikeRadius, radius} = settings;
@@ -100,7 +75,6 @@ export const jsonToBuffers = (data, canvas, regl, settings) => {
   let startEndTimes = regl.buffer(startEndTimesFromAnimationDuration);
   let linksArr = regl.buffer(links.linksArray);
   // let color01 = regl.buffer(propagations.startEndTimes.map(n => 0.5));
-  console.log(neuronsPos);
   const buffers = {
     spikeTime,
     neuronsPos,

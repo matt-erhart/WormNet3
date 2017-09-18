@@ -48,28 +48,39 @@ export class Canvas extends React.Component {
       startEndTimes: d.buffers.startEndTimes
     };
 
-    console.log({ radius: 7, elapsedTime, ...propagationProps })
     regl.frame(({ tick, time }) => {
-      if (this.startTime === 0) this.startTime = time;
-      elapsedTime =
+      if (startTime === 0) startTime = time;
+      console.log(this.props.isPlaying)
+      if (!this.props.isPlaying) {
+        startTime = time - elapsedTime;
+        console.log(startTime, time, elapsedTime )
+        
+      } else {
+        elapsedTime =
         elapsedTime >= settings.duration ? elapsedTime : time - startTime;
+      }
+
+      
       const t = Math.round(d.scales.elapsed.invert(elapsedTime));
-  
+      this.props.onFrame(t)
+      
       camera.tick();
       regl.clear({
         color: [0, 0, 0, 1]
       });
 
       if (tick < 2000) {
-        d.buffers.spikeTime({ data: d.dataFromAllTimes.spikes[tick] });
-        d.buffers.neuronsColorTime({
-          data: d.dataFromAllTimes.colorByTime[tick]
-        });
         
+        d.buffers.spikeTime({ data: d.dataFromAllTimes.spikes[t] });
+        d.buffers.neuronsColorTime({
+          data: d.dataFromAllTimes.colorByTime[t]
+        });
+
         Links({
           linksPos: d.buffers.links,
           count: d.meta.numberOfLinks
         });
+
         Neurons({
           neuronsPos: d.buffers.neuronsPos,
           colors: d.buffers.neuronsColorTime,
@@ -79,8 +90,10 @@ export class Canvas extends React.Component {
 
         Propagations([
           { radius: 7, elapsedTime, ...propagationProps },
-          
+          { radius: 5, elapsedTime: elapsedTime - 0.01, ...propagationProps },
+          { radius: 3, elapsedTime: elapsedTime - 0.02, ...propagationProps }
         ]);
+
       }
     });
   }

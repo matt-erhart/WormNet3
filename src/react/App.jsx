@@ -21,7 +21,7 @@ export class App extends React.Component{
     super();
     this.state = {
       time: 0,
-      isPlaying: false,
+      isPlaying: true,
       fileName: "",
       nLoaded: 0,
       open: false
@@ -40,16 +40,10 @@ export class App extends React.Component{
   };
 
   pauseTimer = () => {
-    this.timer = false;
     this.setState({ isPlaying: false });
   };
 
   toggleTimer = () => {
-    if (this.state.isPlaying) {
-      this.pauseTimer();
-    } else {
-      this.startTimer();
-    }
     this.setState({ isPlaying: !this.state.isPlaying });
   };
 
@@ -99,7 +93,11 @@ export class App extends React.Component{
           <Files prepareData={this.prepareData} />
         </Drawer>
         <div>
-          <Canvas />
+          <Canvas 
+            onFrame={this.setTime}
+            isPlaying={this.state.isPlaying}
+
+          />
           <Controls
             time={this.state.time}
             togglePlay={this.toggleTimer}
