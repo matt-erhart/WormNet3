@@ -27,16 +27,15 @@ import * as data from "../assets/data/full.json";
 // Object.assign(document.body.style,{display: "flex", justifyContent: "center", background: "black"});
 // const el = document.body.appendChild(canvas);
 
-let elapsedTime = 0;
-let prog = 0;
-let startTime = 0;
-let duration = 60; //seconds
-const spikeRadius = 30;
-const radius = 10;
+// let elapsedTime = 0;
+// let prog = 0;
+// let startTime = 0;
+// let duration = 60; //seconds
+// const spikeRadius = 30;
+// const radius = 10;
 
-export const jsonToBuffers = (data, canvas, regl) => {
-  console.log(colors);
-
+export const jsonToBuffers = (data, canvas, regl, settings) => {
+  const {duration, spikeRadius, radius} = settings;
   const neurons = scaleNeuronPositions(
     data.neurons,
     canvas.width,
@@ -44,6 +43,7 @@ export const jsonToBuffers = (data, canvas, regl) => {
   );
   const links = linkPositions(data.links, neurons);
   const propagations = propagationsAsArrays(data.propagations, neurons);
+  console.log(propagations)
   const nTimePoints = _.max(
     _.flattenDeep(propagations.startEndTimes).map(x => +x)
   );
@@ -114,9 +114,11 @@ export const jsonToBuffers = (data, canvas, regl) => {
   const meta = {
     numberOfNeurons: neurons.length,
     numberOfPropagations: propagations.propagationSources.length,
-    numberOfLinks: links.linksArray.length
+    numberOfLinks: links.linksArray.length,
+    numberOfTimePoints: nTimePoints
   };
-  return { buffers, dataFromAllTimes, meta };
+  const scales = {elapsed: elapsedScale, time: timeScale}
+  return { buffers, dataFromAllTimes, meta, scales };
 };
 
 const commonSettings = {
@@ -184,7 +186,7 @@ export const drawLines = (regl, camera) => {
     }`,
 
     attributes: {
-      linksPos: regl.prop('linksPos')
+      linksPos: regl.prop("linksPos")
     },
 
     uniforms: {
@@ -207,56 +209,46 @@ export const drawLines = (regl, camera) => {
     primitive: "line"
   });
 };
-// /**
-//  * PROPAGATION
-//  */
 
-// const interpPoints = regl({
-//   blend: {
-//     enable: true,
-//     func: {
-//       srcRGB: "one",
-//       srcAlpha: "one",
-//       dstRGB: "one minus src alpha",
-//       dstAlpha: "one minus src alpha"
-//     }
-//   },
-//   vert: require("./pointInterp.vert"),
-//   frag: require("./pointInterp.frag"),
-//   cull: {
-//     enable: true,
-//     face: "back"
-//   },
-//   depth: { enable: false },
-//   attributes: {
-//     propagationSources: propagationSources,
-//     propagationTargets: propagationTargets,
-//     propagationColors: propagationColors,
-//     startEndTimes: startEndTimes,
-//     color01: color01
-//   },
-//   uniforms: {
-//     radius: regl.prop("radius"),
-//     aspect: ctx => ctx.viewportWidth / ctx.viewportHeight,
-//     elapsedTime: regl.prop("elapsedTime"),
-//     projection: ({ viewportWidth, viewportHeight }) =>
-//       mat4.perspective(
-//         [],
-//         Math.PI / 4.0,
-//         viewportWidth / viewportHeight,
-//         0.1,
-//         100
-//       ),
-//     model: mat4.identity([]),
-//     view: () => camera.view()
-//   },
-//   primitive: "point",
-//   count: () => propagations.startEndTimes.length
-// });
+export const drawPropagations = (regl, camera) => {
+  return regl({
+    blend: commonSettings.blend,
+    vert: require("./pointInterp.vert"),
+    frag: require("./pointInterp.frag"),
+    cull: {
+      enable: true,
+      face: "back"
+    },
+    depth: commonSettings.depth,
+    attributes: {
+      propagationSources: regl.prop("sources"),
+      propagationTargets: regl.prop("targets"),
+      propagationColors: regl.prop("colors"),
+      startEndTimes: regl.prop("startEndTimes")
+    },
+    uniforms: {
+      radius: regl.prop("radius"),
+      aspect: ctx => ctx.viewportWidth / ctx.viewportHeight,
+      elapsedTime: regl.prop("elapsedTime"),
+      projection: ({ viewportWidth, viewportHeight }) =>
+        mat4.perspective(
+          [],
+          Math.PI / 4.0,
+          viewportWidth / viewportHeight,
+          0.1,
+          100
+        ),
+      model: mat4.identity([]),
+      view: () => camera.view()
+    },
+    primitive: "point",
+    count: () => regl.prop("count")
+  });
+};
 
 // /**
 //  * LINE
-//  */
+// //  */
 
 // let f = regl.frame(({ tick, time }) => {
 //     regl.clear({
