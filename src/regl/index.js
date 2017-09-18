@@ -43,7 +43,6 @@ export const jsonToBuffers = (data, canvas, regl, settings) => {
   );
   const links = linkPositions(data.links, neurons);
   const propagations = propagationsAsArrays(data.propagations, neurons);
-  console.log(propagations)
   const nTimePoints = _.max(
     _.flattenDeep(propagations.startEndTimes).map(x => +x)
   );
@@ -113,7 +112,7 @@ export const jsonToBuffers = (data, canvas, regl, settings) => {
   const dataFromAllTimes = { spikes, colorByTime }; //set spikeTime and neuronsColor buffers with these
   const meta = {
     numberOfNeurons: neurons.length,
-    numberOfPropagations: propagations.propagationSources.length,
+    numberOfPropagations: propagations.startEndTimes.length,
     numberOfLinks: links.linksArray.length,
     numberOfTimePoints: nTimePoints
   };
@@ -242,7 +241,7 @@ export const drawPropagations = (regl, camera) => {
       view: () => camera.view()
     },
     primitive: "point",
-    count: () => regl.prop("count")
+    count: regl.prop("count")
   });
 };
 

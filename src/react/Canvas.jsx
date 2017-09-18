@@ -44,7 +44,8 @@ export class Canvas extends React.Component {
       sources: d.buffers.propagations.sources,
       targets: d.buffers.propagations.targets,
       colors: d.buffers.propagations.colors,
-      count: d.meta.numberOfPropagations
+      count: d.meta.numberOfPropagations,
+      startEndTimes: d.buffers.startEndTimes
     };
 
     console.log({ radius: 7, elapsedTime, ...propagationProps })
@@ -59,27 +60,27 @@ export class Canvas extends React.Component {
         color: [0, 0, 0, 1]
       });
 
-      if (tick < 3000) {
+      if (tick < 2000) {
         d.buffers.spikeTime({ data: d.dataFromAllTimes.spikes[tick] });
         d.buffers.neuronsColorTime({
           data: d.dataFromAllTimes.colorByTime[tick]
         });
-
+        
+        Links({
+          linksPos: d.buffers.links,
+          count: d.meta.numberOfLinks
+        });
         Neurons({
           neuronsPos: d.buffers.neuronsPos,
           colors: d.buffers.neuronsColorTime,
           radius: d.buffers.spikeTime,
           count: d.meta.numberOfNeurons
         });
-        Links({
-          linksPos: d.buffers.links,
-          count: d.meta.numberOfLinks
-        });
 
-        // Propagations([
-        //   { radius: 7, elapsedTime, ...propagationProps },
+        Propagations([
+          { radius: 7, elapsedTime, ...propagationProps },
           
-        // ]);
+        ]);
       }
     });
   }
