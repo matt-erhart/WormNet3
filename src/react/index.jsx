@@ -1,3 +1,5 @@
+const dt = new Date();
+console.log('///////////////////////////  ' + dt.toLocaleTimeString() + '  ////////////////////////////')
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";

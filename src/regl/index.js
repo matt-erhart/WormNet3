@@ -129,43 +129,59 @@ const commonSettings = {
 
 
 
-// let setupCamera = regl({
-//   context: {
-//     uniforms: {
-//       aspect: ctx => ctx.viewportWidth / ctx.viewportHeight,
-//       projection: ({ viewportWidth, viewportHeight }) =>
-//         mat4.perspective(
-//           [],
-//           Math.PI / 4.0,
-//           viewportWidth / viewportHeight,
-//           0.1,
-//           1000
-//         ),
-//       model: mat4.identity([]),
-//       view: () => camera.view()
-//     }
-//   }
-// })
+export const setupCamera = (regl, camera) => {
+  return regl({
+    context: {
+      uniforms: {
+        aspect: ctx => ctx.viewportWidth / ctx.viewportHeight,
+        projection: ({ viewportWidth, viewportHeight }) =>
+          mat4.perspective(
+            [],
+            Math.PI / 4.0,
+            viewportWidth / viewportHeight,
+            0.1,
+            1000
+          ),
+        model: mat4.identity([]),
+        view: () => camera.view()
+      }
+    }
+  })
+}
 
 
-export const drawNeurons = (regl) => {
+
+
+export const drawNeurons = (regl, camera) => {
   return regl({
     vert: require("./pointStatic.vert"),
     frag: require("./pointInterp.frag"),
     blend: commonSettings.blend,
     depth: commonSettings.depth,
     attributes: {
-      neuronsPos: regl.prop('neuronsPos'),
-      colors:  regl.prop('colors'),
-      radius:  regl.prop('radius')
+      neuronsPos: regl.prop("neuronsPos"),
+      colors: regl.prop("colors"),
+      radius: regl.prop("radius")
     },
     uniforms: {
-            aspect: ctx => ctx.viewportWidth / ctx.viewportHeight,
+      aspect: ctx => {
+        return ctx.viewportWidth / ctx.viewportHeight;
+      },
+      projection: ({ viewportWidth, viewportHeight }) =>
+        mat4.perspective(
+          [],
+          Math.PI / 4.0,
+          viewportWidth / viewportHeight,
+          0.1,
+          1000
+        ),
+      model: mat4.identity([]),
+      view: () => camera.view()
     },
     primitive: "point",
-    count:  regl.prop('count')
+    count: regl.prop("count")
   });
-}
+};
 
 // /**
 //  * PROPAGATION

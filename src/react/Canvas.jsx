@@ -1,6 +1,6 @@
 import uid from "uid-safe";
 import * as React from "react";
-import { jsonToBuffers, drawNeurons } from "../regl/index.js";
+import { jsonToBuffers, drawNeurons, setupCamera } from "../regl/index.js";
 import * as data from "../assets/data/feed_json.json";
 
 export class Canvas extends React.Component {
@@ -19,21 +19,32 @@ export class Canvas extends React.Component {
   componentDidMount() {
     const regl = require("regl")({ canvas: this.refs.canvas });
     let d = jsonToBuffers(data, this.refs.canvas, regl);
+    let camera = require("../regl/camera")(this.refs.canvas ,{eye: [0,0,3.4]});
+
     console.log(d);
-    const draw = drawNeurons(regl);
-    regl.frame(({tick}) => {
+    const draw = drawNeurons(regl, camera);
+    regl.frame(({ tick }) => {
+
+      camera.tick();
       regl.clear({
         color: [0, 0, 0, 1]
       });
 
-      d.buffers.spikeTime({ data: d.dataFromAllTimes.spikes[tick] });
-      d.buffers.neuronsColorTime({data: d.dataFromAllTimes.colorByTime[tick]})
-      draw({
-        neuronsPos: d.buffers.neuronsPos,
-        colors: d.buffers.neuronsColorTime,
-        radius: d.buffers.spikeTime,
-        count: d.meta.numberOfNeurons
-      });
+      if (tick < 3000) {
+        d.buffers.spikeTime({ data: d.dataFromAllTimes.spikes[tick] });
+        d.buffers.neuronsColorTime({
+          data: d.dataFromAllTimes.colorByTime[tick]
+        });
+
+        
+          draw({
+            neuronsPos: d.buffers.neuronsPos,
+            colors: d.buffers.neuronsColorTime,
+            radius: d.buffers.spikeTime,
+            count: d.meta.numberOfNeurons
+          });
+        
+      }
     });
   }
 
