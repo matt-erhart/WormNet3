@@ -17,14 +17,18 @@ export class Canvas extends React.Component {
   }
 
   componentDidMount() {
-    const regl = require("regl")({ canvas: this.refs.canvas });
+    const regl = require("regl")({
+         canvas: this.refs.canvas ,
+         extensions: [ "OES_standard_derivatives"]
+        });
     let d = jsonToBuffers(data, this.refs.canvas, regl);
-    let camera = require("../regl/camera")(this.refs.canvas ,{eye: [0,0,3.4]});
+    let camera = require("../regl/camera")(this.refs.canvas, {
+      eye: [0, 0, 3.4]
+    });
 
     console.log(d);
     const draw = drawNeurons(regl, camera);
     regl.frame(({ tick }) => {
-
       camera.tick();
       regl.clear({
         color: [0, 0, 0, 1]
@@ -36,14 +40,12 @@ export class Canvas extends React.Component {
           data: d.dataFromAllTimes.colorByTime[tick]
         });
 
-        
-          draw({
-            neuronsPos: d.buffers.neuronsPos,
-            colors: d.buffers.neuronsColorTime,
-            radius: d.buffers.spikeTime,
-            count: d.meta.numberOfNeurons
-          });
-        
+        draw({
+          neuronsPos: d.buffers.neuronsPos,
+          colors: d.buffers.neuronsColorTime,
+          radius: d.buffers.spikeTime,
+          count: d.meta.numberOfNeurons
+        });
       }
     });
   }

@@ -8,7 +8,6 @@ attribute float radius;
 
 void main () {
     color01_v2f = vec4(colors,1); //varying passes to frag
-    gl_Position = projection * view  * vec4(neuronsPos.x, neuronsPos.y * aspect, neuronsPos.z, 1);
-    // gl_Position =  vec4(neuronsPos.x, neuronsPos.y * aspect, neuronsPos.z, 1);
+    gl_Position = projection * view  * model * vec4(neuronsPos.x, neuronsPos.y * aspect, neuronsPos.z, 1);
     gl_PointSize = radius;
 }
