@@ -50,19 +50,20 @@ export class Canvas extends React.Component {
 
     regl.frame(({ tick, time }) => {
       if (startTime === 0) startTime = time;
-      console.log(this.props.isPlaying)
+      if (this.props.time !== this.props.scrubTime) {
+        elapsedTime = d.scales.elapsed(this.props.scrubTime);
+        startTime = time - elapsedTime;
+      }
+
       if (!this.props.isPlaying) {
         startTime = time - elapsedTime;
-        console.log(startTime, time, elapsedTime )
-        
       } else {
         elapsedTime =
         elapsedTime >= settings.duration ? elapsedTime : time - startTime;
       }
 
-      
       const t = Math.round(d.scales.elapsed.invert(elapsedTime));
-      this.props.onFrame(t)
+      this.props.setTime(t)
       
       camera.tick();
       regl.clear({

@@ -24,30 +24,28 @@ export class App extends React.Component{
       isPlaying: true,
       fileName: "",
       nLoaded: 0,
-      open: false
+      open: false,
+      scrubTime: 0
     };
   }
 
   componentWillMount() {
     const savedtime = store.get("time") || 0;
-
   }
+
   componentDidMount() {
   }
-
-  startTimer = () => {
-    this.setState({ isPlaying: true });
-  };
-
-  pauseTimer = () => {
-    this.setState({ isPlaying: false });
-  };
 
   toggleTimer = () => {
     this.setState({ isPlaying: !this.state.isPlaying });
   };
 
+  setScrubTime = value => {
+    this.setState({ scrubTime: value });
+  }
+
   setTime = value => {
+    this.setState({ scrubTime: value });    
     this.setState({ time: value });
   };
 
@@ -94,14 +92,15 @@ export class App extends React.Component{
         </Drawer>
         <div>
           <Canvas 
-            onFrame={this.setTime}
+            setTime={this.setTime}
             isPlaying={this.state.isPlaying}
-
+            time={this.state.time}
+            scrubTime={this.state.scrubTime}
           />
           <Controls
             time={this.state.time}
             togglePlay={this.toggleTimer}
-            changeTime={this.setTime}
+            changeTime={this.setScrubTime}
             isPlaying={this.state.isPlaying}
             nTimePoints={6000}
           />
