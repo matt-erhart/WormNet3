@@ -14,8 +14,11 @@ export class Canvas extends React.Component {
     super(props);
     this.state = {
       canvasHeight: 1000,
-      canvasWidth: 1000
+      canvasWidth: 1000,
     };
+    this.regl; 
+    this.d;
+    this.settings = { duration: 60, spikeRadius: 30, radius: 10 }
   }
 
   shouldComponentUpdate() {
@@ -28,7 +31,9 @@ export class Canvas extends React.Component {
           .then(res => {
             return res.json();
           })
-          .then(data => console.log(data))
+          .then(data => {
+            this.d = jsonToBuffers(data, this.refs.canvas, this.regl, this.settings);            
+          })
           .catch(function(error) {
             console.log(error);
           });
@@ -38,33 +43,32 @@ export class Canvas extends React.Component {
     let startTime = 0;
     let elapsedTime = 0;
 
-    const regl = require("regl")({
+    this.regl = require("regl")({
       canvas: this.refs.canvas,
       extensions: ["OES_standard_derivatives"],
       onDone: require("fail-nicely")
     });
 
-    let settings = { duration: 60, spikeRadius: 30, radius: 10 };
-    let d = jsonToBuffers(data, this.refs.canvas, regl, settings);
+    this.d = jsonToBuffers(data, this.refs.canvas, this.regl, this.settings);
     let camera = require("../regl/camera")(this.refs.canvas, {
       eye: [0, 0, 3.4]
     });
 
-    const Neurons = drawNeurons(regl, camera);
-    const Links = drawLines(regl, camera);
-    const Propagations = drawPropagations(regl, camera);
+    const Neurons = drawNeurons(this.regl, camera);
+    const Links = drawLines(this.regl, camera);
+    const Propagations = drawPropagations(this.regl, camera);
     const propagationProps = {
-      sources: d.buffers.propagations.sources,
-      targets: d.buffers.propagations.targets,
-      colors: d.buffers.propagations.colors,
-      count: d.meta.numberOfPropagations,
-      startEndTimes: d.buffers.startEndTimes
+      sources: this.d.buffers.propagations.sources,
+      targets: this.d.buffers.propagations.targets,
+      colors: this.d.buffers.propagations.colors,
+      count: this.d.meta.numberOfPropagations,
+      startEndTimes: this.d.buffers.startEndTimes
     };
 
-    regl.frame(({ tick, time }) => {
+    this.regl.frame(({ tick, time }) => {
       if (startTime === 0) startTime = time;
       if (this.props.time !== this.props.scrubTime) {
-        elapsedTime = d.scales.elapsed(this.props.scrubTime);
+        elapsedTime = this.d.scales.elapsed(this.props.scrubTime);
         startTime = time - elapsedTime;
       }
 
@@ -72,31 +76,31 @@ export class Canvas extends React.Component {
         startTime = time - elapsedTime;
       } else {
         elapsedTime =
-        elapsedTime >= settings.duration ? elapsedTime : time - startTime;
+        elapsedTime >= this.settings.duration ? elapsedTime : time - startTime;
       }
-      const t = Math.ceil(d.scales.elapsed.invert(elapsedTime));
+      const t = Math.ceil(this.d.scales.elapsed.invert(elapsedTime));
       if (tick%5 === 0) this.props.setTime(t)
       
       camera.tick();
-      regl.clear({
+      this.regl.clear({
         color: [0, 0, 0, 1]
       });
        
-        d.buffers.spikeTime({ data: d.dataFromAllTimes.spikes[t] });
-        d.buffers.neuronsColorTime({
-          data: d.dataFromAllTimes.colorByTime[t]
+        this.d.buffers.spikeTime({ data: this.d.dataFromAllTimes.spikes[t] });
+        this.d.buffers.neuronsColorTime({
+          data: this.d.dataFromAllTimes.colorByTime[t]
         });
 
         Links({
-          linksPos: d.buffers.links,
-          count: d.meta.numberOfLinks
+          linksPos: this.d.buffers.links,
+          count: this.d.meta.numberOfLinks
         });
 
         Neurons({
-          neuronsPos: d.buffers.neuronsPos,
-          colors: d.buffers.neuronsColorTime,
-          radius: d.buffers.spikeTime,
-          count: d.meta.numberOfNeurons
+          neuronsPos: this.d.buffers.neuronsPos,
+          colors: this.d.buffers.neuronsColorTime,
+          radius: this.d.buffers.spikeTime,
+          count: this.d.meta.numberOfNeurons
         });
 
         Propagations([
