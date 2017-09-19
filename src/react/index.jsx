@@ -1,11 +1,23 @@
 const dt = new Date();
-console.log('///////////////////////////  ' + dt.toLocaleTimeString() + '  ////////////////////////////')
+console.log(
+  "///////////////////////////  " +
+    dt.toLocaleTimeString() +
+    "  ////////////////////////////"
+);
 import * as React from "react";
 import * as ReactDOM from "react-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Switch,
+  RouteComponentProps
+} from "react-router-dom";
 import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import getMuiTheme from "material-ui/styles/getMuiTheme";
 var injectTapEventPlugin = require("react-tap-event-plugin");
-try { injectTapEventPlugin(); } catch (e) {  }
+try {
+  injectTapEventPlugin();
+} catch (e) {}
 
 var firebase = require("firebase");
 var config = {
@@ -22,15 +34,17 @@ if (!firebase.apps.length) {
 }
 export var storage = firebase.storage();
 export var database = firebase.database();
-import { App } from "./App";
+import App from "./App";
 
 const Root = () => {
   return (
     <MuiThemeProvider>
-      <App />
+      <Router>
+        <Route path="/:fileName?/:enableMenu?" component={App} />
+      </Router>
     </MuiThemeProvider>
   );
 };
 
 document.body.style.backgroundColor = "black";
-ReactDOM.render(<Root />, document.getElementById('root'));
+ReactDOM.render(<Root />, document.getElementById("root"));

@@ -9,8 +9,9 @@ var uid = require("uid-safe");
 import * as _ from "lodash";
 import { List, ListItem } from "material-ui/List";
 import DeleteForever from "material-ui/svg-icons/action/delete-forever";
+import { withRouter } from "react-router-dom";
 
-export class Files extends React.Component {
+class Files extends React.Component {
   fbListener;
   constructor() {
     super();
@@ -25,6 +26,7 @@ export class Files extends React.Component {
   }
 
   handleDownload(e, fileName) {
+    this.props.history.push('/' + fileName.replace('.json', ''))    
     storage
       .ref("data/" + fileName)
       .getDownloadURL()
@@ -80,3 +82,5 @@ export class Files extends React.Component {
     );
   }
 }
+
+export default withRouter(Files)

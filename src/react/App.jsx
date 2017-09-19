@@ -6,33 +6,47 @@ import {
   colors,
 } from "./constants";
 import { Controls } from "./Controls";
-import { Upload } from "./Upload";
-import { Files } from "./Files";
-import {Canvas} from "./Canvas"
+import  Upload  from "./Upload";
+import  Files  from "./Files";
+import Canvas from "./Canvas"
 
 import Drawer from "material-ui/Drawer";
 import IconButton from "material-ui/IconButton";
 import NavigationMenu from "material-ui/svg-icons/navigation/menu";
 import ChevronRight from "material-ui/svg-icons/navigation/chevron-right";
 import ChevronLeft from "material-ui/svg-icons/navigation/chevron-left";
+import { withRouter } from "react-router-dom";
+import { storage, database } from "./index";
 
-export class App extends React.Component{
+class App extends React.Component{
   constructor() {
     super();
     this.state = {
       time: 0,
-      isPlaying: false,
+      isPlaying: true,
       fileName: "",
       nLoaded: 0,
       open: false,
       scrubTime: 0,
       jsonUrl: '',
-      nTimePoints: 6000
+      nTimePoints: 6000,
+      mountCanvas: true
     };
   }
 
   componentWillMount() {
     const savedtime = store.get("time") || 0;
+    if (this.props.match.params.fileName !== undefined) {
+      this.setState({mountCanvas: false})
+      storage
+      .ref("data/" + this.props.match.params.fileName + '.json')
+      .getDownloadURL()
+      .then(url => {
+        this.setState({jsonUrl:url})
+        console.log('got url on mount')
+        this.setState({mountCanvas: true})        
+      }).catch(err=>{console.log(err)})
+    }
   }
 
   componentDidMount() {
@@ -55,6 +69,7 @@ export class App extends React.Component{
   getDownloadUrl = (url) => {
     this.setState({jsonUrl: url})
   }
+
   setnTimePoints = (value) => {
     this.setState({nTimePoints: value})
   }
@@ -98,14 +113,16 @@ export class App extends React.Component{
           <Files getDownloadUrl={this.getDownloadUrl} />
         </Drawer>
         <div>
-          <Canvas 
-            setTime={this.setTime}
-            setnTimePoints={this.setnTimePoints}
-            isPlaying={this.state.isPlaying}
-            time={this.state.time}
-            scrubTime={this.state.scrubTime}
-            jsonUrl={this.state.jsonUrl}
-          />
+          { this.state.mountCanvas &&
+            <Canvas 
+              setTime={this.setTime}
+              setnTimePoints={this.setnTimePoints}
+              isPlaying={this.state.isPlaying}
+              time={this.state.time}
+              scrubTime={this.state.scrubTime}
+              jsonUrl={this.state.jsonUrl}
+            />
+          }
           <Controls
             time={this.state.time}
             togglePlay={this.toggleTimer}
@@ -118,3 +135,5 @@ export class App extends React.Component{
     );
   }
 }
+
+export default withRouter(App)

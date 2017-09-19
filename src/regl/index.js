@@ -8,9 +8,8 @@ import { colors } from "./constants";
 import { rgb01 } from "./scaleNeuronPositions";
 import * as data from "../assets/data/full.json";
 
-
 export const jsonToBuffers = (data, canvas, regl, settings) => {
-  const {duration, spikeRadius, radius} = settings;
+  const { duration, spikeRadius, radius } = settings;
   const neurons = scaleNeuronPositions(
     data.neurons,
     canvas.width,
@@ -74,14 +73,19 @@ export const jsonToBuffers = (data, canvas, regl, settings) => {
   let pcolors = regl.buffer(propagations.propagationTypeColors);
   let startEndTimes = regl.buffer(startEndTimesFromAnimationDuration);
   let linksArr = regl.buffer(links.linksArray);
-  // let color01 = regl.buffer(propagations.startEndTimes.map(n => 0.5));
+
   const buffers = {
     spikeTime,
     neuronsPos,
     links: linksArr,
     neuronsColorTime,
-    startEndTimes,
-    propagations: { sources, targets, colors: pcolors }
+    propagations: {
+      sources,
+      targets,
+      colors: pcolors,
+      count: propagations.startEndTimes.length,
+      startEndTimes
+    }
   };
   const dataFromAllTimes = { spikes, colorByTime }; //set spikeTime and neuronsColor buffers with these
   const meta = {
@@ -90,7 +94,7 @@ export const jsonToBuffers = (data, canvas, regl, settings) => {
     numberOfLinks: links.linksArray.length,
     numberOfTimePoints: nTimePoints
   };
-  const scales = {elapsed: elapsedScale, time: timeScale}
+  const scales = { elapsed: elapsedScale, time: timeScale };
   return { buffers, dataFromAllTimes, meta, scales };
 };
 

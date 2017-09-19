@@ -11,6 +11,8 @@ const {
   RawPlugin
 } = require("fuse-box");
 const rimraf = require("rimraf"); //fuse-box can 'clean' but this works better for me
+const historyFallback = require( 'connect-history-api-fallback')
+
 var browserSync = require("browser-sync").create();
 
 let fuse, app, vendor, isProduction; //isProduction set by sparky task 'prod'.
@@ -63,7 +65,10 @@ Sparky.task("copyAssets", () => {
 Sparky.task("browserSync", () => {
   browserSync.init({
     server: {
-      baseDir: "./dist"
+      baseDir: "./dist",
+      middleware: [
+        historyFallback()
+      ]
     }
   });
 });

@@ -8,8 +8,9 @@ var uid = require("uid-safe");
 import FileUpload from "material-ui/svg-icons/file/file-upload";
 import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
+import { withRouter } from "react-router-dom";
 
-export class Upload extends React.Component {
+class Upload extends React.Component {
   constructor() {
     super();
     this.state = { progress: 0 };
@@ -35,6 +36,7 @@ export class Upload extends React.Component {
       () => {
         database.ref().child("json_files").push({ fileName: fileName });
         this.setState({progress: 0})
+        this.props.history.push('/' + fileName.replace('.json', ''))
       }
     );
   }
@@ -64,3 +66,5 @@ export class Upload extends React.Component {
     );
   }
 }
+
+export default withRouter(Upload)
