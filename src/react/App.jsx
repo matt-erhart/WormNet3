@@ -26,7 +26,8 @@ export class App extends React.Component{
       nLoaded: 0,
       open: false,
       scrubTime: 0,
-      jsonUrl: ''
+      jsonUrl: '',
+      nTimePoints: 6000
     };
   }
 
@@ -53,6 +54,9 @@ export class App extends React.Component{
 
   getDownloadUrl = (url) => {
     this.setState({jsonUrl: url})
+  }
+  setnTimePoints = (value) => {
+    this.setState({nTimePoints: value})
   }
 
   render() {
@@ -96,6 +100,7 @@ export class App extends React.Component{
         <div>
           <Canvas 
             setTime={this.setTime}
+            setnTimePoints={this.setnTimePoints}
             isPlaying={this.state.isPlaying}
             time={this.state.time}
             scrubTime={this.state.scrubTime}
@@ -106,7 +111,7 @@ export class App extends React.Component{
             togglePlay={this.toggleTimer}
             changeTime={this.setScrubTime}
             isPlaying={this.state.isPlaying}
-            nTimePoints={6000}
+            nTimePoints={this.state.nTimePoints}
           />
         </div>
       </div>
