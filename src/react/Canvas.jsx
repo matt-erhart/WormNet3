@@ -36,53 +36,27 @@ class Canvas extends React.Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps) { // load data with url
     if (nextProps.jsonUrl !== "" && this.props.jsonUrl !== nextProps.jsonUrl) {
-      // await fetchJson(nextProps.jsonUrl)
+      this.fetchData_StartViz(nextProps.jsonUrl)
     }
   }
-
-  // fetchJson = (url, jsonToBuffers) => {
-  //   this.setState({ loading: true });
-  //   return fetch(url, { mode: "cors" })
-  //     .then(res => {
-  //       return res.json();
-  //     })
-  //     .then(data => {
-  //       this.d = jsonToBuffers(
-  //         data,
-  //         this.refs.canvas,
-  //         this.regl,
-  //         this.settings
-  //       );
-  //       this.props.setnTimePoints(this.d.meta.numberOfTimePoints);
-  //       this.propagationProps = {
-  //         sources: this.d.buffers.propagations.sources,
-  //         targets: this.d.buffers.propagations.targets,
-  //         colors: this.d.buffers.propagations.colors,
-  //         count: this.d.meta.numberOfPropagations,
-  //         startEndTimes: this.d.buffers.startEndTimes
-  //       };
-  //       console.log("loaded", data);
-  //       this.setState({ loading: false });
-  //     })
-  //     .catch(error => {
-  //       this.setState({ loading: false });
-  //       console.log(error);
-  //     });
-  // };
 
   componentDidMount() {
     let startTime = 0;
     let elapsedTime = 0;
     if (this.props.jsonUrl !== "") {
-      init
-        .setupRegl(this.refs.canvas, this.props.jsonUrl, this.settings)
-        .then(env => {
-          let { camera, d, drawCmds, regl } = env;
-          this.viz(camera, d, drawCmds, regl, this.settings);
-        });
+      this.fetchData_StartViz(this.props.jsonUrl)
     }
+  }
+
+  fetchData_StartViz = (url) => {
+    init
+    .setupRegl(this.refs.canvas, url, this.settings)
+    .then(env => {
+      let { camera, d, drawCmds, regl } = env;
+      this.viz(camera, d, drawCmds, regl, this.settings);
+    });
   }
 
   viz = (camera, data, drawCmds, regl, settings) => {
