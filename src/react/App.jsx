@@ -25,7 +25,8 @@ export class App extends React.Component{
       fileName: "",
       nLoaded: 0,
       open: false,
-      scrubTime: 0
+      scrubTime: 0,
+      jsonUrl: ''
     };
   }
 
@@ -50,9 +51,8 @@ export class App extends React.Component{
 
   handleToggle = () => this.setState({ open: !this.state.open });
 
-  prepareData = (json) => {
-    console.log('prepare', json)
-
+  getDownloadUrl = (url) => {
+    this.setState({jsonUrl: url})
   }
 
   render() {
@@ -91,7 +91,7 @@ export class App extends React.Component{
           >
             <ChevronRight />
           </IconButton>
-          <Files prepareData={this.prepareData} />
+          <Files getDownloadUrl={this.getDownloadUrl} />
         </Drawer>
         <div>
           <Canvas 
@@ -99,6 +99,7 @@ export class App extends React.Component{
             isPlaying={this.state.isPlaying}
             time={this.state.time}
             scrubTime={this.state.scrubTime}
+            jsonUrl={this.state.jsonUrl}
           />
           <Controls
             time={this.state.time}

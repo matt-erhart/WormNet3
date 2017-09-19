@@ -29,14 +29,7 @@ export class Files extends React.Component {
       .ref("data/" + fileName)
       .getDownloadURL()
       .then(url => {
-        fetch(url, { mode: "cors" })
-          .then(res => {
-            return res.json();
-          })
-          .then(data => this.props.prepareData(data))
-          .catch(function(error) {
-            console.log(error);
-          });
+        this.props.getDownloadUrl(url)
       });
   }
   componentWillUnmount() {

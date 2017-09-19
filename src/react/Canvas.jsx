@@ -9,6 +9,7 @@ import {
 import * as data from "../assets/data/feed_json.json";
 
 export class Canvas extends React.Component {
+
   constructor(props) {
     super(props);
     this.state = {
@@ -19,6 +20,18 @@ export class Canvas extends React.Component {
 
   shouldComponentUpdate() {
     return false;
+  }
+
+  componentWillReceiveProps(nextProps){
+    if (nextProps.jsonUrl !== '' && this.props.jsonUrl !== nextProps.jsonUrl)
+    fetch(nextProps.jsonUrl, { mode: "cors" })
+          .then(res => {
+            return res.json();
+          })
+          .then(data => console.log(data))
+          .catch(function(error) {
+            console.log(error);
+          });
   }
 
   componentDidMount() {
