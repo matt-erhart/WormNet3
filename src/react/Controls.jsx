@@ -32,7 +32,8 @@ export const Controls= (props) => {
       style={{
         display: "flex",
         alignContent: "center",
-        justifyContent: "center"
+        justifyContent: "center",
+        bottom: 0
       }}
     >
       <div>

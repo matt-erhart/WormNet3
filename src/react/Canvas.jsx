@@ -1,31 +1,27 @@
 import uid from "uid-safe";
 import * as React from "react";
-import {
-  jsonToBuffers,
-  drawNeurons,
-  drawLines,
-  drawPropagations
-} from "../regl/index.js";
-import * as data from "../assets/data/full.json";
 import { withRouter } from "react-router-dom";
 import * as init from "./initRegl";
+let pad = 20;
+let height = window.innerHeight - pad;
+let width = window.innerWidth - pad;
+if (height > width) height = width;
+if (width > height){
+  width = .5*width > height ? .5*width : height;
+  height = height - 100;
+  console.log(width, height)
+}
+
 
 class Canvas extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      canvasHeight: 1400,
-      canvasWidth: 1400,
       loading: false
     };
+    this.size = {width: 1, height: 1}
     this.reglRaf;
-    this.Neurons;
-    this.Propagations;
-    this.Links;
-    this.regl;
-    this.d;
     this.settings = { duration: 60, spikeRadius: 30, radius: 10 };
-    this.propagationProps;
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -124,8 +120,8 @@ class Canvas extends React.Component {
     return (
       <canvas
         ref="canvas"
-        width={this.state.canvasWidth || 1}
-        height={this.state.canvasHeight || 1}
+        width={width}
+        height={height}
         style={{ left: 0, top: 0 }}
       />
     );
@@ -133,44 +129,3 @@ class Canvas extends React.Component {
 }
 
 export default withRouter(Canvas);
-// if (this.props.jsonUrl !== "") {
-//   this.fetchJson(this.props.jsonUrl, jsonToBuffers).then(data => {
-//     this.regl = require("regl")({
-//       canvas: this.refs.canvas,
-//       extensions: ["OES_standard_derivatives"],
-//       onDone: require("fail-nicely")
-//     });
-
-//     // regl draw commands need a regl instance and a camera
-//     let camera = require("../regl/camera")(this.refs.canvas, {
-//       eye: [0, 0, 3.4]
-//     });
-//     const Neurons = drawNeurons(this.regl, camera);
-//     const Links = drawLines(this.regl, camera);
-//     const Propagations = drawPropagations(this.regl, camera);
-//     this.regl = require("regl")({
-//       canvas: this.refs.canvas,
-//       extensions: ["OES_standard_derivatives"],
-//       onDone: require("fail-nicely")
-//     });
-
-//     // regl draw commands need a regl instance and a camera
-//     let camera = require("../regl/camera")(this.refs.canvas, {
-//       eye: [0, 0, 3.4]
-//     });
-//     this.Neurons = drawNeurons(this.regl, camera);
-//     this.Links = drawLines(this.regl, camera);
-//     this.Propagations = drawPropagations(this.regl, camera);
-//   });
-// }
-
-// this.d = jsonToBuffers(data, this.refs.canvas, this.regl, this.settings);
-// this.props.setnTimePoints(this.d.meta.numberOfTimePoints);
-
-// this.propagationProps = {
-//   sources: this.d.buffers.propagations.sources,
-//   targets: this.d.buffers.propagations.targets,
-//   colors: this.d.buffers.propagations.colors,
-//   count: this.d.meta.numberOfPropagations,
-//   startEndTimes: this.d.buffers.startEndTimes
-// };

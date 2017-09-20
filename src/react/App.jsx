@@ -114,6 +114,12 @@ class App extends React.Component{
         </Drawer>
         <div>
           { this.state.mountCanvas &&
+            <div
+      style={{
+        display: "flex",
+        alignContent: "center",
+        justifyContent: "center"
+      }}>
             <Canvas 
               setTime={this.setTime}
               setnTimePoints={this.setnTimePoints}
@@ -122,7 +128,9 @@ class App extends React.Component{
               scrubTime={this.state.scrubTime}
               jsonUrl={this.state.jsonUrl}
             />
+            </div>
           }
+          { this.state.mountCanvas &&
           <Controls
             time={this.state.time}
             togglePlay={this.toggleTimer}
@@ -130,6 +138,7 @@ class App extends React.Component{
             isPlaying={this.state.isPlaying}
             nTimePoints={this.state.nTimePoints}
           />
+          }
         </div>
       </div>
     );

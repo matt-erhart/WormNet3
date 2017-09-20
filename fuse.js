@@ -8,7 +8,8 @@ const {
   WebIndexPlugin,
   Sparky,
   JSONPlugin,
-  RawPlugin
+  RawPlugin,
+  PostCSSPlugin
 } = require("fuse-box");
 const rimraf = require("rimraf"); //fuse-box can 'clean' but this works better for me
 const historyFallback = require( 'connect-history-api-fallback')
@@ -18,7 +19,7 @@ var browserSync = require("browser-sync").create();
 let fuse, app, vendor, isProduction; //isProduction set by sparky task 'prod'.
 
 Sparky.task("config", () => {
-  fuse = new FuseBox({
+fuse = new FuseBox({
     homeDir: "src",
     sourceMaps: !isProduction, //so you can see nicely formated code for debugging
     hash: isProduction, // what's this?
@@ -27,8 +28,8 @@ Sparky.task("config", () => {
     experimentalFeatures: true, // what's this?
     target: "browser",
     plugins: [
+      CSSPlugin(),
       SVGPlugin(), // for importing
-      CSSPlugin(), // for importing
       JSONPlugin(), // for importing
       RawPlugin([".frag", ".vert"]),
       WebIndexPlugin({
