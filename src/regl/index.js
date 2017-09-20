@@ -6,7 +6,6 @@ const range = require("d3-array").range;
 import * as _ from "lodash";
 import { colors } from "./constants";
 import { rgb01 } from "./scaleNeuronPositions";
-import * as data from "../assets/data/full.json";
 
 export const jsonToBuffers = (data, canvas, regl, settings) => {
   const { duration, spikeRadius, radius } = settings;

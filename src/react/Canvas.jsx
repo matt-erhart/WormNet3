@@ -12,7 +12,6 @@ if (width > height){
   console.log(width, height)
 }
 
-
 class Canvas extends React.Component {
   constructor(props) {
     super(props);
@@ -51,6 +50,7 @@ class Canvas extends React.Component {
     .setupRegl(this.refs.canvas, url, this.settings)
     .then(env => {
       let { camera, d, drawCmds, regl } = env;
+      this.props.setnTimePoints(d.meta.numberOfTimePoints);
       this.viz(camera, d, drawCmds, regl, this.settings);
     });
   }

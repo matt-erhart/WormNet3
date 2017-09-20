@@ -9,7 +9,6 @@ const {
   Sparky,
   JSONPlugin,
   RawPlugin,
-  PostCSSPlugin
 } = require("fuse-box");
 const rimraf = require("rimraf"); //fuse-box can 'clean' but this works better for me
 const historyFallback = require( 'connect-history-api-fallback')
@@ -39,7 +38,7 @@ fuse = new FuseBox({
       isProduction &&
         QuantumPlugin({
           // reduce bundle size
-          treeshake: true, //remove unused code
+          treeshake: false, //remove unused code
           uglify: true // tightly pack the js
         })
     ]
