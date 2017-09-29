@@ -13,12 +13,13 @@ function attachCamera(canvas, opts) {
   opts.pan = opts.pan !== false
   opts.scale = opts.scale !== false
   opts.rotate = opts.rotate !== false
-
+  opts.eye = opts.eye ? opts.eye : [0,0,3.5];
   var scroll = createScroll(canvas, opts.scale)
   var mbut = mb(canvas, opts.rotate)
   var mpos = mp(canvas)
+  console.log(opts.eye)
   var camera = createCamera(
-      [0, 0, 3.5]
+    opts.eye
     , [0, 0, 0]
     , [0, 1, 0]
   )

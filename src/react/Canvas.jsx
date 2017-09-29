@@ -7,10 +7,10 @@ let height = window.innerHeight - pad;
 let width = window.innerWidth - pad;
 if (height > width) height = width;
 if (width > height){
-  width = .5*width > height ? .5*width : height;
+  // width = .5*width > height ? .5*width : height;
   height = height - 100;
-  console.log(width, height)
 }
+console.log(width, height)
 
 class Canvas extends React.Component {
   constructor(props) {

@@ -26,8 +26,10 @@ export const createReglWithCamera = (canvas) =>{
       onDone: require("fail-nicely")
     });
 
+    let aspect = (canvas.width/canvas.height);
+    aspect = aspect < 1 ? 1: aspect;
     const camera =  require("../regl/camera")(canvas, {
-      eye: [0, 0, 3.4]
+      eye: [0, 0, 3.4 * aspect]
     });
 
     return {regl, camera}

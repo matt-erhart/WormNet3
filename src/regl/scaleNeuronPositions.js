@@ -20,7 +20,7 @@ export const rgb01 = color => {
 
 //** NDC is normalized display coords. Webgl coords. */
 const pixelsToNDC = (x, y, plotWidth, plotHeight) => {
-  return [2.0 * (x / plotWidth - 0.5), -(2.0 * (y / plotHeight - 0.5))];
+  return [2.0 * (x / plotWidth - 0.5) * (plotWidth/plotHeight) , -(2.0 * (y / plotHeight - 0.5))];
 };
 
 export const scaleNeuronPositions = (
@@ -55,6 +55,28 @@ export const scaleNeuronPositions = (
     neurons[i].distFromTopLeft = dist(vec2(...neurons[i].posScaled), topLeft);
   });
 
+  // const xglExtent = extent(neurons.map(x=>x.posScaled[0]));
+  // const xZoomScale = d3
+  // .scaleLinear()
+  // .domain(xglExtent)
+  // .range([-.94, .94]);
+
+  // const yglExtent = extent(neurons.map(x=>x.posScaled[1]));   
+  // const yZoomScale = d3
+  // .scaleLinear()
+  // .domain(yglExtent)
+  // .range([-.94, .94]);
+
+  // neurons.forEach((neuron, i) => {
+  //   neurons[i].posScaled = [
+  //     xZoomScale(neuron.posScaled[0]),
+  //     yZoomScale(neuron.posScaled[1]),
+  //   ]
+  // })
+
+  // console.log(xglExtent, extent(neurons.map(x=>x.posScaled[0])))
+  // console.log(yglExtent, extent(neurons.map(x=>x.posScaled[1])))
+  
   const dists = neurons.map(n => n.distFromTopLeft);
   const distsRange = extent(dists);
   const distScale = d3
